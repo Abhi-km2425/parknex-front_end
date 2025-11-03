@@ -168,6 +168,7 @@ const LandingPage = () => {
                 className="img-fluid animate__animated animate__fadeInRight position-relative"
                 style={{
                   maxHeight: "75%",
+                   maxWidth: "50%",
                   zIndex: 2,
                   objectFit: "contain",
                   borderRadius: "10px",

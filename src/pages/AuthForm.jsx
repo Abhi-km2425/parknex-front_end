@@ -1,41 +1,72 @@
 import React, { useState } from "react";
 import { Form, Button, Card, Container } from "react-bootstrap";
 import CustomNavbar from "../components/Navbar";
-
-// Firebase config (replace with your actual config)
-
+import { Link, useNavigate } from "react-router-dom";
+import { registerUserAPI, userLoginAPI } from "../service/allAPI";
+// import { loginAPI, registerAPI } from "../../services/allAPI"; // Add your APIs later
+// import { toast } from "react-toastify"; // Add toast later
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
+  const [userDetails, setUserDetails] = useState({
+    Username: "",
+    email: "",
+    password: "",
+     confirmPassword: "",
+  });
 
-  const toggleForm = () => setIsLogin(!isLogin);
+  console.log(userDetails);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isLogin) {
-      // Login logic here
-      console.log("Logging in:", email, password);
+  const navigate = useNavigate();
+
+  //user regoster api call
+const handleRegister = async () => {
+  const { Username, email, password, confirmPassword } = userDetails;
+  
+  if (!Username || !email || !password || !confirmPassword) {
+    alert("Fill the form completely");
+  } else if (password !== confirmPassword) {
+    alert("Passwords do not match");
+  } else {
+    const result = await registerUserAPI({ Username, email, password }); // No confirmPassword
+    console.log("Register:", result);
+    alert("User registered successfully");
+    setUserDetails({
+      Username: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
+    });
+  }
+};
+  //login api call
+  const handleLogin = async () => {
+    const { email, password } = userDetails;
+    if (!email || !password) {
+      alert("Fill the form completely");
     } else {
-      // Register logic here
-      console.log("Registering:", email, password);
-    }
-  };
+      const result = await userLoginAPI({ email, password });
+      console.log("Full API response:", result);
 
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      console.log("Google user:", result.user);
-    } catch (error) {
-      console.error("Google sign-in error:", error);
+      // Check if result has token property
+      if (result.data && result.data.token) {
+        sessionStorage.setItem("token", result.data.token);
+        sessionStorage.setItem(
+          "existingUser",
+          JSON.stringify(result.data.existingUser)
+        );
+        alert("Login successful");
+        navigate("/");
+      } else {
+        alert("Login failed - no token received");
+      }
     }
   };
 
   return (
-<>
-<CustomNavbar/>
+    <>
+      <CustomNavbar />
       <div
         className="min-vh-100 d-flex align-items-center justify-content-center"
         style={{
@@ -48,55 +79,120 @@ const AuthForm = () => {
               <h3 className="text-center fw-bold mb-4">
                 {isLogin ? "Login to ParkNex" : "Register for ParkNex"}
               </h3>
-              <Form onSubmit={handleSubmit}>
+              <Form>
+                {/* Username - only for register */}
+                {!isLogin && (
+                  <Form.Group className="mb-3">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter your Username"
+                      className="bg-dark text-light border-secondary"
+                      style={{ color: "white" }}
+                      value={userDetails.Username}
+                      onChange={(e) =>
+                        setUserDetails({
+                          ...userDetails,
+                          Username: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+                )}
+
+                {/* Email - for both */}
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
                   <Form.Control
                     type="email"
+                    placeholder="Enter your Email"
                     className="bg-dark text-light border-secondary"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    value={userDetails.email}
+                    onChange={(e) =>
+                      setUserDetails({ ...userDetails, email: e.target.value })
+                    }
                   />
                 </Form.Group>
+
+                {/* Password - for both */}
                 <Form.Group className="mb-3">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
-                    className="bg-dark text-light border-secondary"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
+                    placeholder="Enter your Password"
+                    className="bg-dark text-white border-secondary"
+                    value={userDetails.password}
+                    onChange={(e) =>
+                      setUserDetails({
+                        ...userDetails,
+                        password: e.target.value,
+                      })
+                    }
                   />
+                  {!isLogin && (
+                    <Form.Group className="mb-3">
+                      <Form.Label>Confirm Password</Form.Label>
+                      <Form.Control
+                        type="password"
+                        placeholder="Confirm your Password"
+                        className="bg-dark text-light border-secondary"
+                        style={{ color: "white" }}
+                        value={userDetails.confirmPassword}
+                        onChange={(e) =>
+                          setUserDetails({
+                            ...userDetails,
+                            confirmPassword: e.target.value,
+                          })
+                        }
+                      />
+                    </Form.Group>
+                  )}
                 </Form.Group>
-                <Button variant="success" type="submit" className="w-100 mb-3">
-                  {isLogin ? "Login" : "Register"}
-                </Button>
-                <Button
-                  variant="outline-light"
-                  className="w-100 mb-2"
-                  onClick={handleGoogleSignIn}
-                >
-                  Continue with Google
-                </Button>
+
+                <div className="d-grid gap-2">
+                  {isLogin ? (
+                    <Button variant="success" onClick={handleLogin}>
+                      Login
+                    </Button>
+                  ) : (
+                    <Button variant="success" onClick={handleRegister}>
+                      Register
+                    </Button>
+                  )}
+                </div>
+
                 <div className="text-center mt-3">
-                  <Button
-                    variant="link"
-                    className="text-info"
-                    onClick={toggleForm}
-                  >
-                    {isLogin
-                      ? "Don't have an account? Register"
-                      : "Already have an account? Login"}
-                  </Button>
+                  {isLogin ? (
+                    <p className="text-light">
+                      Don't have an account?{" "}
+                      <Button
+                        variant="link"
+                        className="text-info p-0"
+                        onClick={() => setIsLogin(false)}
+                      >
+                        Register
+                      </Button>
+                    </p>
+                  ) : (
+                    <p className="text-light">
+                      Already have an account?{" "}
+                      <Button
+                        variant="link"
+                        className="text-info p-0"
+                        onClick={() => setIsLogin(true)}
+                      >
+                        Login
+                      </Button>
+                    </p>
+                  )}
                 </div>
               </Form>
             </Card.Body>
           </Card>
         </Container>
       </div>
-  
-</>  );
+    </>
+  );
 };
 
 export default AuthForm;
