@@ -15,6 +15,7 @@ import ContactPage from "./pages/ContactPage";
 import { Bounce } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,8 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/authform" element={<AuthForm />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/profile" element={<ProfilePage/>} />
+
         {/* admin side */}
         <Route path="/admin-home" element={<AdminHome />} />
         <Route path="/admin-booking" element={<BookingManagement />} />

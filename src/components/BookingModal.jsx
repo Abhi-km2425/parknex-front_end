@@ -5,6 +5,7 @@ import { Form, Card, Badge, Row, Col } from 'react-bootstrap';
 import { FaCalendar, FaCar } from 'react-icons/fa';
 import { createBookingAPI } from '../service/allAPI';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function BookingModal({ show, onHide, spot }) {
   const [bookingDetails, setBookingDetails] = useState({
@@ -83,13 +84,13 @@ const [token, setToken] = useState("");
 
 
 
-
+const navigate = useNavigate();
 
 const handleBookingSubmit = async () => {
   const token = sessionStorage.getItem("token");
   if (!token) {
     toast("Please login first");
-    return;
+    navigate("/authform");
   }
 
   const bookingData = {
@@ -113,14 +114,14 @@ const handleBookingSubmit = async () => {
     console.log("API response:", result);
     
     if (result.data) {
-      alert("Booking confirmed!");
+      toast.success("Booking confirmed!");
       onHide();
     } else {
       alert("Booking failed: " + (result.message || "Unknown error"));
     }
   } catch (error) {
     console.log("Booking error:", error);
-    alert("Booking error: " + error.message);
+    toast.error("Booking error: " + error.message);
   }
 };
   if (!spot) return null;

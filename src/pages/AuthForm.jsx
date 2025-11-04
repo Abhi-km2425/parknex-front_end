@@ -3,6 +3,7 @@ import { Form, Button, Card, Container } from "react-bootstrap";
 import CustomNavbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUserAPI, userLoginAPI } from "../service/allAPI";
+import { toast } from "react-toastify";
 // import { loginAPI, registerAPI } from "../../services/allAPI"; // Add your APIs later
 // import { toast } from "react-toastify"; // Add toast later
 
@@ -44,7 +45,7 @@ const handleRegister = async () => {
   const handleLogin = async () => {
     const { email, password } = userDetails;
     if (!email || !password) {
-      alert("Fill the form completely");
+      toast.warning("Fill the form completely");
     } else {
       const result = await userLoginAPI({ email, password });
       console.log("Full API response:", result);
@@ -56,7 +57,7 @@ const handleRegister = async () => {
           "existingUser",
           JSON.stringify(result.data.existingUser)
         );
-        alert("Login successful");
+        toast.success("Login successful");
         navigate("/");
       } else {
         alert("Login failed - no token received");
