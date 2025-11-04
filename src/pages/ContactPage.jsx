@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Navbar } from 'react-bootstrap';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
 import CustomNavbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -193,6 +194,7 @@ const ContactPage = () => {
             </Row>
           </Container>
         </div>
+             <Footer />
     
 </>  );
 };

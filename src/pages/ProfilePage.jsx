@@ -21,7 +21,6 @@ const ProfilePage = () => {
   return (
     <>
      <CustomNavbar />
-<div className="d-flex flex-column min-vh-100">
          
           <div
             className="min-vh-100 text-white"
@@ -105,7 +104,7 @@ const ProfilePage = () => {
    
           </div>
     
-</div>   
+
          <Footer />
           </>
   );

@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa";
 import CustomNavbar from "../components/Navbar";
 import { cancelBookingAPI, getUserBookingsAPI } from "../service/allAPI";
+import Footer from "../components/Footer";
 
 const BookingHistoryPage = () => {
   const [filter, setFilter] = useState("all"); // all, upcoming, completed, cancelled
@@ -318,6 +319,8 @@ const handleCancelBooking = async (bookingId) => {
             </Col>
           </Row>
         </Container>
+                 <Footer />
+        
       </div>
     </>
   );

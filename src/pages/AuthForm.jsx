@@ -4,6 +4,7 @@ import CustomNavbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUserAPI, userLoginAPI } from "../service/allAPI";
 import { toast } from "react-toastify";
+import Footer from "../components/Footer";
 // import { loginAPI, registerAPI } from "../../services/allAPI"; // Add your APIs later
 // import { toast } from "react-toastify"; // Add toast later
 
@@ -191,6 +192,8 @@ const handleRegister = async () => {
             </Card.Body>
           </Card>
         </Container>
+                 <Footer />
+        
       </div>
     </>
   );

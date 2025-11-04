@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button, Form, Badge } from "react-bootstrap"
 import { FaStar, FaMapMarkerAlt, FaClock, FaSearch, FaDirections } from "react-icons/fa";
 import BookingModal from "../components/BookingModal";
 import CustomNavbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 function ParkingPage() {
       const [selectedLocation, setSelectedLocation] = useState("");
@@ -87,6 +88,7 @@ function ParkingPage() {
       style={{
         background: "linear-gradient(135deg, #0F2027 0%, #203A43 50%, #2C5364 100%)",
         paddingTop: "80px",
+          paddingBottom: "40px",
       }}
     >
       <Container>
@@ -223,6 +225,8 @@ function ParkingPage() {
         spot={selectedSpot}
       />
     </div>
+             <Footer />
+    
 </>
   )
 }

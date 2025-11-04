@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaLock, FaClock, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 import CustomNavbar from '../components/Navbar';
+import Footer from '../components/Footer';
 const AboutPage = () => {
   const teamMembers = [
     {
@@ -255,6 +256,8 @@ const AboutPage = () => {
           </Row>
         </Container>
       </div>
+               <Footer />
+      
   
 </>  );
 };

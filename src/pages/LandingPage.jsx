@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import "animate.css";
 import CustomNavbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -255,30 +256,8 @@ const LandingPage = () => {
           </Row>
         </Container>
   
-        {/* CTA Section */}
-        <Container className="py-5 text-center">
-          <Row className="justify-content-center">
-            <Col lg={8}>
-              <Card className="bg-success border-0 text-white">
-                <Card.Body className="p-5">
-                  <h3 className="fw-bold mb-3">Ready to Park Smarter?</h3>
-                  <p className="mb-4 fs-5">
-                    Join thousands of users who have transformed their parking
-                    experience
-                  </p>
-                  <Button
-                    variant="light"
-                    size="lg"
-                    className="px-5 py-3 fw-bold"
-                    onClick={() => navigate("/parking")}
-                  >
-                    Get Started Now
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
+         <Footer />
+
   
         <style jsx>{`
           .hover-card:hover {
