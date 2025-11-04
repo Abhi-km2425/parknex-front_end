@@ -40,6 +40,21 @@ function ParkingPage() {
           image: "https://tse2.mm.bing.net/th/id/OIP.5GwBsF_yAuUig2jYAhwdTgHaE8?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3",
           address: "Lulu Mall, Edappally, Kochi, Kerala 682024",
           contact: "+91 9876543211"
+        },
+        {
+          id: 3,
+          location: "Lulu Mall Basement",
+          pricePerHour: 60,
+          availability: "Limited",
+          availableSpots: 3,
+          distance: "1.2km",
+          rating: 3.0,
+          totalReviews: 89,
+          peakHours: "4PM - 9PM",
+          features: ["Covered", "Security", "Valet"],
+          image: "https://thumbs.dreamstime.com/b/underground-parking-lot-cars-under-office-building-shopping-center-299811550.jpg",
+          address: "Lulu Mall, Edappally, Kochi, Kerala 682024",
+          contact: "+91 9876543211"
         }
       ];
     

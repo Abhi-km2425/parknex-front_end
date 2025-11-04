@@ -31,7 +31,6 @@ const CustomNavbar = () => {
     <Navbar
       expand="lg"
       variant="dark"
-      sticky="top"
       style={{
         background: "linear-gradient(to right, rgba(15,32,39,0.9), rgba(32,58,67,0.9), rgba(44,83,100,0.9))",
         backdropFilter: "blur(10px)",
