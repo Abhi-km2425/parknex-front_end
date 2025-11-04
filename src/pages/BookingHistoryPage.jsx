@@ -17,7 +17,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import CustomNavbar from "../components/Navbar";
-import { getUserBookingsAPI } from "../service/allAPI";
+import { cancelBookingAPI, getUserBookingsAPI } from "../service/allAPI";
 
 const BookingHistoryPage = () => {
   const [filter, setFilter] = useState("all"); // all, upcoming, completed, cancelled
@@ -61,12 +61,6 @@ const BookingHistoryPage = () => {
       return matchesFilter && matchesSearch;
     }
   );
-  const handleCancelBooking = (bookingId) => {
-    // Mock cancel functionality
-    if (window.confirm("Are you sure you want to cancel this booking?")) {
-      alert(`Booking ${bookingId} cancelled successfully!`);
-    }
-  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -97,12 +91,55 @@ const BookingHistoryPage = () => {
       };
 
       const result = await getUserBookingsAPI(headers);
+          const now = new Date();
+      // Auto-update status to 'completed' if endTime has passed
+    const updatedBookings = result.data.map((booking) => {
+      const endTime = new Date(booking.endTime);
+      if (booking.status === "confirmed" && endTime < now) {
+        return { ...booking, status: "completed" };
+      }
+      return booking;
+    });
       setBookings(result.data);
       console.log(result);
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
   };
+
+
+
+
+  //cancel booking
+
+const handleCancelBooking = async (bookingId) => {
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
+
+  if (window.confirm("Are you sure you want to cancel this booking?")) {
+    try {
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const result = await cancelBookingAPI(bookingId, headers);
+
+      if (result.status === 200) {
+        alert("Booking cancelled successfully!");
+        getApiHandler(); // refresh bookings
+      } else {
+        alert("Cancellation failed: " + result.data);
+      }
+    } catch (error) {
+      console.error("Cancel error:", error);
+      alert("Error cancelling booking");
+    }
+  }
+};
+
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("token");

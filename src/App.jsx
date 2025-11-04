@@ -12,6 +12,9 @@ import AdminHome from "./admin/pages/AdminHome";
 import BookingManagement from "./admin/pages/BookingManagement";
 import ParkingManagement from "./admin/pages/ParkingManagement";
 import ContactPage from "./pages/ContactPage";
+import { Bounce } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +34,18 @@ function App() {
         <Route path="/booking" element={<BookingHistoryPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/authform" element={<AuthForm />} />
-        <Route path="/contact" element={<ContactPage/>}/>
+        <Route path="/contact" element={<ContactPage />} />
         {/* admin side */}
-        <Route path="/admin-home" element={<AdminHome/>}/>
-        <Route path="/admin-booking" element={<BookingManagement/>}/>
-        <Route path="/admin-parking" element={<ParkingManagement />}/>
+        <Route path="/admin-home" element={<AdminHome />} />
+        <Route path="/admin-booking" element={<BookingManagement />} />
+        <Route path="/admin-parking" element={<ParkingManagement />} />
       </Routes>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        theme="light"
+        transition={Bounce}
+      />
     </>
   );
 }

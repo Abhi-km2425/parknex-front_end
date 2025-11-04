@@ -25,4 +25,9 @@ export const getUserBookingsAPI=async(reqHeader)=>{
     return await commonAPI('GET',`${serverURL}/get-bookings`,"",reqHeader)
 }
 
+//cancel booking
+export const cancelBookingAPI = (id,reqBody, headers) => {
+  return commonAPI("PUT", `/cancel-booking/${id}`, reqBody, headers);
+};
+
 

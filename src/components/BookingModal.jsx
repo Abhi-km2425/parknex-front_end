@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import { Form, Card, Badge, Row, Col } from 'react-bootstrap';
 import { FaCalendar, FaCar } from 'react-icons/fa';
 import { createBookingAPI } from '../service/allAPI';
+import { toast } from 'react-toastify';
 
 function BookingModal({ show, onHide, spot }) {
   const [bookingDetails, setBookingDetails] = useState({
@@ -87,7 +88,7 @@ const [token, setToken] = useState("");
 const handleBookingSubmit = async () => {
   const token = sessionStorage.getItem("token");
   if (!token) {
-    alert("Please login first");
+    toast("Please login first");
     return;
   }
 
