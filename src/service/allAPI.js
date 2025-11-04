@@ -9,6 +9,20 @@ export const registerUserAPI=async (reqBody)=>{
     return await commonAPI('POST',`${serverURL}/register`,reqBody)
 }
 
-export const userLoginAPI=async(reqBody,reqh)=>{
+
+//login api
+export const userLoginAPI=async(reqBody)=>{
     return await commonAPI('POST',`${serverURL}/login`,reqBody)
 }
+
+//booking api
+export const createBookingAPI=async(reqBody,reqHeader)=>{
+    return await commonAPI('POST',`${serverURL}/bookings`,reqBody,reqHeader)
+}
+
+//get//booking api
+export const getUserBookingsAPI=async(reqHeader)=>{
+    return await commonAPI('GET',`${serverURL}/get-bookings`,"",reqHeader)
+}
+
+

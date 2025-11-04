@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { Form, Card, Badge, Row, Col } from 'react-bootstrap';
 import { FaCalendar, FaCar } from 'react-icons/fa';
+import { createBookingAPI } from '../service/allAPI';
 
 function BookingModal({ show, onHide, spot }) {
   const [bookingDetails, setBookingDetails] = useState({
@@ -14,6 +15,8 @@ function BookingModal({ show, onHide, spot }) {
     totalHours: 0,
     totalPrice: 0
   });
+const [token, setToken] = useState("");
+
 
   // Initialize with default values when spot changes
   useEffect(() => {
@@ -77,32 +80,52 @@ function BookingModal({ show, onHide, spot }) {
     });
   };
 
-  const handleBookingSubmit = () => {
-    // Prepare data for POST API
-    const bookingData = {
-      spotId: spot.id,
-      spotName: spot.location,
-      vehicleNumber: bookingDetails.vehicleNumber,
-      startDateTime: `${bookingDetails.startDate}T${bookingDetails.startTime}`,
-      endDateTime: `${bookingDetails.endDate}T${bookingDetails.endTime}`,
-      totalHours: bookingDetails.totalHours,
-      totalPrice: bookingDetails.totalPrice,
-      pricePerHour: spot.pricePerHour
-    };
 
-    // Here you can call your POST API
-    console.log('Booking Data for API:', bookingData);
-    
-    // For now, show success message
-    alert(`Booking confirmed for ${spot.location}!\nVehicle: ${bookingDetails.vehicleNumber}\nTotal: ₹${bookingDetails.totalPrice}`);
-    
-    // Close modal
-    onHide();
+
+
+
+const handleBookingSubmit = async () => {
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
+
+  const bookingData = {
+    parkingId: spot.id,
+    vehicleNumber: bookingDetails.vehicleNumber,
+    startTime: `${bookingDetails.startDate}T${bookingDetails.startTime}`,
+    endTime: `${bookingDetails.endDate}T${bookingDetails.endTime}`,
+    totalHours: bookingDetails.totalHours,
+    totalPrice: bookingDetails.totalPrice
   };
 
+  const reqHeader = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
+  };
+
+  console.log("Sending booking data:", bookingData);
+  
+  try {
+    const result = await createBookingAPI(bookingData, reqHeader);
+    console.log("API response:", result);
+    
+    if (result.data) {
+      alert("Booking confirmed!");
+      onHide();
+    } else {
+      alert("Booking failed: " + (result.message || "Unknown error"));
+    }
+  } catch (error) {
+    console.log("Booking error:", error);
+    alert("Booking error: " + error.message);
+  }
+};
   if (!spot) return null;
 
-  return (
+
+return (
     <Modal
       show={show}
       onHide={onHide}
