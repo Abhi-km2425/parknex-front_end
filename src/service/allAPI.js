@@ -26,8 +26,26 @@ export const getUserBookingsAPI=async(reqHeader)=>{
 }
 
 //cancel booking
-export const cancelBookingAPI = (id,reqBody, headers) => {
-  return commonAPI("PUT", `/cancel-booking/${id}`, reqBody, headers);
-};
+export const cancelBookingAPI=async(id)=>{
+    return await commonAPI('PUT',`${serverURL}/cancel-booking/${id}`,)
+}
+
+//...................ADMIN SIDE.........................
+//post
+export const addParkingAPI=async(reqBody,reqHeader)=>{
+    return await commonAPI('POST',`${serverURL}/add-parking`,reqBody,reqHeader)
+}
+
+
+//get
+export const getAddedParkingAPI=async()=>{
+    return await commonAPI('GET',`${serverURL}/get-parking`,)
+}
+
+
+//delete
+export const deletetParkingslotAPI=async(id)=>{
+    return await commonAPI('DELETE',`${serverURL}/delete-slot/${id}`,)
+}
 
 

@@ -15,10 +15,13 @@ function BookingModal({ show, onHide, spot }) {
     endTime: '',
     vehicleNumber: '',
     totalHours: 0,
-    totalPrice: 0
+    totalPrice: 0,
   });
+  const [activeSpot, setActiveSpot] = useState(null);
+
 const [token, setToken] = useState("");
 
+console.log("Received spot in modal:", spot);
 
   // Initialize with default values when spot changes
   useEffect(() => {
@@ -94,13 +97,17 @@ const handleBookingSubmit = async () => {
   }
 
   const bookingData = {
-    parkingId: spot.id,
+    parkingId: activeSpot?.id,
+    location:activeSpot?.location,
+  
+    
     vehicleNumber: bookingDetails.vehicleNumber,
     startTime: `${bookingDetails.startDate}T${bookingDetails.startTime}`,
     endTime: `${bookingDetails.endDate}T${bookingDetails.endTime}`,
     totalHours: bookingDetails.totalHours,
     totalPrice: bookingDetails.totalPrice
   };
+    console.log(activeSpot.location,"spot location name on post api");
 
   const reqHeader = {
     Authorization: `Bearer ${token}`,
@@ -124,7 +131,16 @@ const handleBookingSubmit = async () => {
     toast.error("Booking error: " + error.message);
   }
 };
+console.log("spot object:", spot);
+  useEffect(() => {
+  if (spot && show) {
+    setActiveSpot(spot);
+  }
+}, [spot, show]);
+console.log(activeSpot);
+
   if (!spot) return null;
+
 
 
 return (

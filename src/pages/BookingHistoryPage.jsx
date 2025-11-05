@@ -19,6 +19,7 @@ import {
 import CustomNavbar from "../components/Navbar";
 import { cancelBookingAPI, getUserBookingsAPI } from "../service/allAPI";
 import Footer from "../components/Footer";
+import { toast } from "react-toastify";
 
 const BookingHistoryPage = () => {
   const [filter, setFilter] = useState("all"); // all, upcoming, completed, cancelled
@@ -92,15 +93,15 @@ const BookingHistoryPage = () => {
       };
 
       const result = await getUserBookingsAPI(headers);
-          const now = new Date();
+      const now = new Date();
       // Auto-update status to 'completed' if endTime has passed
-    const updatedBookings = result.data.map((booking) => {
-      const endTime = new Date(booking.endTime);
-      if (booking.status === "confirmed" && endTime < now) {
-        return { ...booking, status: "completed" };
-      }
-      return booking;
-    });
+      const updatedBookings = result.data.map((booking) => {
+        const endTime = new Date(booking.endTime);
+        if (booking.status === "confirmed" && endTime < now) {
+          return { ...booking, status: "completed" };
+        }
+        return booking;
+      });
       setBookings(result.data);
       console.log(result);
     } catch (error) {
@@ -108,39 +109,20 @@ const BookingHistoryPage = () => {
     }
   };
 
-
-
-
   //cancel booking
 
-const handleCancelBooking = async (bookingId) => {
-  const token = sessionStorage.getItem("token");
-  if (!token) {
-    alert("Please login first");
-    return;
-  }
-
-  if (window.confirm("Are you sure you want to cancel this booking?")) {
+  const handleCancelBooking = async (id) => {
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
+      const result = await cancelBookingAPI(id);
+      toast.success(result, "cancelled succesfully");
+      console.log(result, "cancelled");
 
-      const result = await cancelBookingAPI(bookingId, headers);
-
-      if (result.status === 200) {
-        alert("Booking cancelled successfully!");
-        getApiHandler(); // refresh bookings
-      } else {
-        alert("Cancellation failed: " + result.data);
-      }
+      getApiHandler(); // refresh the list
     } catch (error) {
-      console.error("Cancel error:", error);
-      alert("Error cancelling booking");
+      toast.error("Failed to cancel booking");
+      console.error(error);
     }
-  }
-};
-
+  };
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("token");
@@ -197,7 +179,7 @@ const handleCancelBooking = async (bookingId) => {
               <Form.Control
                 type="text"
                 placeholder="Search by location or vehicle number..."
-                className="bg-dark text-light border-secondary"
+                className="bg-dark text-light border-secondary custom-placeholder"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -284,7 +266,7 @@ const handleCancelBooking = async (bookingId) => {
                               <Button
                                 variant="outline-danger"
                                 size="sm"
-                                onClick={() => handleCancelBooking(booking.id)}
+                                onClick={() => handleCancelBooking(booking._id)}
                               >
                                 <FaTimes className="me-1" />
                                 Cancel
@@ -302,7 +284,7 @@ const handleCancelBooking = async (bookingId) => {
                             {booking.status === "cancelled" && (
                               <Button
                                 as={Link}
-                                to="/vehicles"
+                                to="/parking"
                                 variant="outline-success"
                                 size="sm"
                               >
@@ -319,8 +301,7 @@ const handleCancelBooking = async (bookingId) => {
             </Col>
           </Row>
         </Container>
-                 <Footer />
-        
+        <Footer />
       </div>
     </>
   );

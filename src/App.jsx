@@ -19,6 +19,7 @@ import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
+console.log("Current mode:", process.env.NODE_ENV);
 
   useEffect(() => {
     setTimeout(() => {

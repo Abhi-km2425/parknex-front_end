@@ -61,6 +61,7 @@ function ParkingPage() {
     
       const handleBookNow = (spot) => {
         setSelectedSpot(spot);
+         console.log("Selected spot:", spot);
         setShowBookingModal(true);
       };
     
@@ -109,8 +110,9 @@ function ParkingPage() {
                     <Form.Control
                       type="text"
                       placeholder="Search locations..."
-                      className="bg-dark text-light border-secondary ps-5"
+                      className="bg-dark text-light border-secondary ps-5 custom-placeholder"
                       value={searchQuery}
+                     
                       onChange={(e) => {
                         setSearchQuery(e.target.value);
                         setSelectedLocation("");

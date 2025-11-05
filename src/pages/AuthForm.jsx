@@ -59,7 +59,13 @@ const handleRegister = async () => {
           JSON.stringify(result.data.existingUser)
         );
         toast.success("Login successful");
-        navigate("/");
+        if (email === "admin@gmail.com") {
+  navigate("/admin-home");
+} else {
+  navigate("/");
+}
+
+      
       } else {
         alert("Login failed - no token received");
       }
@@ -192,9 +198,10 @@ const handleRegister = async () => {
             </Card.Body>
           </Card>
         </Container>
-                 <Footer />
+               
         
       </div>
+        <Footer />
     </>
   );
 };
