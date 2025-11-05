@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import AdminHeader from '../component/AdminHeader';
 import { FaParking, FaCalendarCheck, FaUsers, FaRupeeSign } from 'react-icons/fa';
+import { getAllParkingAPI } from '../../service/allAPI';
+
 
 const AdminHome = () => {
   const stats = [
@@ -42,6 +44,24 @@ const AdminHome = () => {
     { time: "Yesterday", activity: "Booking cancelled", user: "User #3921" },
     { time: "Yesterday", activity: "Payment received", user: "User #4456" }
   ];
+const [totalSlots, setTotalSlots] = useState(0);
+
+
+
+useEffect(() => {
+  fetchSlotCount();
+}, []);
+
+const fetchSlotCount = async () => {
+  try {
+    const result = await getAllParkingAPI();
+    if (result.status === 200 && Array.isArray(result.data)) {
+      setTotalSlots(result.data.length);
+    }
+  } catch (error) {
+    console.error("Error fetching parking slots:", error);
+  }
+};
 
   return (
 <>
@@ -70,7 +90,7 @@ const AdminHome = () => {
                             View
                           </Button>
                         </div>
-                        <h4 className="fw-bold text-success">{stat.value}</h4>
+                        <h4 className="fw-bold text-success">{totalSlots}</h4>
                         <h6 className="mb-2">{stat.title}</h6>
                         <small className="text-muted">{stat.change}</small>
                       </Card.Body>
