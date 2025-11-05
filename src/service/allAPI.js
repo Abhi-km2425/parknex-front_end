@@ -49,3 +49,13 @@ export const deletetParkingslotAPI=async(id)=>{
 }
 
 
+//edit
+export const updateParkingAPI=async(id,reqBody,reqHeader)=>{
+    return await commonAPI('PUT',`${serverURL}/update-slot/${id}`,reqBody,reqHeader)
+}
+
+
+//.................public route ui...................
+export const getAllParkingAPI = async () => {
+  return await commonAPI('GET', `${serverURL}/all-parking`,);
+};

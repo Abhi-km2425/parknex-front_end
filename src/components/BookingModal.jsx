@@ -97,7 +97,8 @@ const handleBookingSubmit = async () => {
   }
 
   const bookingData = {
-    parkingId: activeSpot?.id,
+     parkingId: activeSpot?._id,
+
     location:activeSpot?.location,
   
     

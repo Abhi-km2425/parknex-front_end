@@ -12,7 +12,12 @@ import {
 } from "react-bootstrap";
 import AdminHeader from "../component/AdminHeader";
 import { FaEdit, FaTrash, FaPlus, FaSearch } from "react-icons/fa";
-import { addParkingAPI, deletetParkingslotAPI, getAddedParkingAPI } from "../../service/allAPI";
+import {
+  addParkingAPI,
+  deletetParkingslotAPI,
+  getAddedParkingAPI,
+  updateParkingAPI,
+} from "../../service/allAPI";
 import { toast } from "react-toastify";
 
 const ParkingManagement = () => {
@@ -59,24 +64,41 @@ const ParkingManagement = () => {
     peakHours: "",
     rating: "",
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
+  //flter
   const filteredSpots = parkingSpots.filter(
     (spot) =>
       spot.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       spot.address?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteSpot = async(id) => {
-   try {
-    const result= await deletetParkingslotAPI(id)
-    console.log(result);
-    toast.success("slot deleted suucefully")
-    getAdminAddedParking()
-   }
-    catch (error) {
-    console.log(error);
-    
-   }
+  //edit modal
+  const handleEditClick = (spot) => {
+    setNewParking({
+      location: spot.location,
+      address: spot.address,
+      pricePerHour: spot.pricePerHour,
+      availableSpots: spot.availableSpots,
+      peakHours: spot.peakHours,
+      rating: spot.rating,
+    });
+    setEditingId(spot._id);
+    setIsEditing(true);
+    setShowModal(true);
+  };
+
+  //delete api call
+  const handleDeleteSpot = async (id) => {
+    try {
+      const result = await deletetParkingslotAPI(id);
+      console.log(result);
+      toast.success("slot deleted suucefully");
+      getAdminAddedParking();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getStatusVariant = (status) => {
@@ -97,60 +119,67 @@ const ParkingManagement = () => {
   const token = sessionStorage.getItem("token");
   console.log(token, "token");
 
-  const handleAddParking = async () => {
-    const {
-      location,
-      address,
-      pricePerHour,
-      availableSpots,
-      peakHours,
-      rating,
-    } = newParking;
+const handleSubmit = async () => {
+  const {
+    location,
+    address,
+    pricePerHour,
+    availableSpots,
+    peakHours,
+    rating,
+  } = newParking;
 
-    if (
-      !location ||
-      !address ||
-      !pricePerHour ||
-      !availableSpots ||
-      !peakHours
-    ) {
-      toast.warning("Fill all required fields");
-    } else {
-      const token = sessionStorage.getItem("token");
+  if (!location || !address || !pricePerHour || !availableSpots || !peakHours) {
+    toast.warning("Fill all required fields");
+    return;
+  }
 
-      const reqHeader = {
-        Authorization: `Bearer ${token}`,
-      };
+  const token = sessionStorage.getItem("token");
+  const reqHeader = { Authorization: `Bearer ${token}` };
 
-      const payload = {
-        location,
-        address,
-        pricePerHour: parseInt(pricePerHour),
-        availableSpots: parseInt(availableSpots),
-        peakHours,
-        rating: parseFloat(rating) || 0,
-      };
+  const payload = {
+    location,
+    address,
+    pricePerHour: parseInt(pricePerHour),
+    availableSpots: parseInt(availableSpots),
+    peakHours,
+    rating: parseFloat(rating) || 0,
+  };
 
-      const result = await addParkingAPI(payload, reqHeader);
-      console.log("Full API response:", result);
-
-      if (result.data && result.data._id) {
-        toast.success("Parking spot added successfully");
-        setParkingSpots([...parkingSpots, result.data]);
-        setShowModal(false);
-        setNewParking({
-          location: "",
-          address: "",
-          pricePerHour: "",
-          availableSpots: "",
-          peakHours: "",
-          rating: "",
-        });
+  try {
+    if (isEditing) {
+      const result = await updateParkingAPI(editingId, payload, reqHeader);
+      if (result.status === 200) {
+        toast.success("Parking spot updated");
       } else {
-        toast.error("Failed to add parking spot");
+        toast.error("Failed to update spot");
+      }
+    } else {
+      const result = await addParkingAPI(payload, reqHeader);
+      if (result.data && result.data._id) {
+        toast.success("Parking spot added");
+      } else {
+        toast.error("Failed to add spot");
       }
     }
-  };
+
+    getAdminAddedParking();
+    setShowModal(false);
+    setNewParking({
+      location: "",
+      address: "",
+      pricePerHour: "",
+      availableSpots: "",
+      peakHours: "",
+      rating: "",
+    });
+    setIsEditing(false);
+    setEditingId(null);
+  } catch (error) {
+    console.error("Submit error:", error);
+    toast.error("Server error");
+  }
+};
 
   const handleFeatureToggle = (feature) => {
     setNewParking((prev) => ({
@@ -170,12 +199,11 @@ const ParkingManagement = () => {
     "Camera Security",
   ];
 
-
   //get api call for admin added slot
   const getAdminAddedParking = async () => {
     try {
       const result = await getAddedParkingAPI();
-       setParkingSpots(result.data);
+      setParkingSpots(result.data);
       console.log(result.data);
     } catch (error) {
       console.log();
@@ -266,7 +294,11 @@ const ParkingManagement = () => {
                         </td>
                         <td>
                           <div className="d-flex gap-2">
-                            <Button variant="outline-warning" size="sm">
+                            <Button
+                              variant="outline-warning"
+                              size="sm"
+                              onClick={() => handleEditClick(spot)}
+                            >
                               <FaEdit />
                             </Button>
                             <Button
@@ -415,8 +447,8 @@ const ParkingManagement = () => {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="success" onClick={handleAddParking}>
-            Add Parking Spot
+          <Button variant="success" onClick={handleSubmit}>
+            {isEditing ? "Update Parking Spot" : "Add Parking Spot"}
           </Button>
         </Modal.Footer>
       </Modal>
