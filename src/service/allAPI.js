@@ -55,7 +55,28 @@ export const updateParkingAPI=async(id,reqBody,reqHeader)=>{
 }
 
 
-//.................public route ui...................
+//.................for admin dashboard route ui...................
+//no of slots booked
 export const getAllParkingAPI = async () => {
   return await commonAPI('GET', `${serverURL}/all-parking`,);
 };
+
+
+//todays booking
+export const getTodayBookingsAPI=async()=>{
+    return await commonAPI('GET',`${serverURL}/get-user-bookings`)
+}
+
+
+//no of active user by booking confiremed with id
+
+export const getActiveUsersAPI=async()=>{
+    return await commonAPI('GET',`${serverURL}/geta-active-users`)
+}
+
+
+export const getTodayRevenueAPI=async()=>{
+    return await commonAPI('GET',`${serverURL}/admin-today-revenue`)
+}
+
+

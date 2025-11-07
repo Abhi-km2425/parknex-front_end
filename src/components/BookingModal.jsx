@@ -7,7 +7,7 @@ import { createBookingAPI } from '../service/allAPI';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
-function BookingModal({ show, onHide, spot }) {
+function BookingModal({ show, onHide, spot ,fetchParkingSpots}) {
   const [bookingDetails, setBookingDetails] = useState({
     startDate: '',
     endDate: '',
@@ -18,7 +18,7 @@ function BookingModal({ show, onHide, spot }) {
     totalPrice: 0,
   });
   const [activeSpot, setActiveSpot] = useState(null);
-
+const [bookingSuccess, setBookingSuccess] = useState(false);
 const [token, setToken] = useState("");
 
 console.log("Received spot in modal:", spot);
@@ -42,6 +42,7 @@ console.log("Received spot in modal:", spot);
         totalPrice: spot.pricePerHour * 2
       });
     }
+    
   }, [spot, show]);
 
   // Calculate total hours and price
@@ -94,21 +95,18 @@ const handleBookingSubmit = async () => {
   if (!token) {
     toast("Please login first");
     navigate("/authform");
+    return;
   }
 
   const bookingData = {
-     parkingId: activeSpot?._id,
-
-    location:activeSpot?.location,
-  
-    
+    parkingId: activeSpot?._id,
+    location: activeSpot?.location,
     vehicleNumber: bookingDetails.vehicleNumber,
     startTime: `${bookingDetails.startDate}T${bookingDetails.startTime}`,
     endTime: `${bookingDetails.endDate}T${bookingDetails.endTime}`,
     totalHours: bookingDetails.totalHours,
     totalPrice: bookingDetails.totalPrice
   };
-    console.log(activeSpot.location,"spot location name on post api");
 
   const reqHeader = {
     Authorization: `Bearer ${token}`,
@@ -116,14 +114,15 @@ const handleBookingSubmit = async () => {
   };
 
   console.log("Sending booking data:", bookingData);
-  
+
   try {
     const result = await createBookingAPI(bookingData, reqHeader);
     console.log("API response:", result);
-    
+
     if (result.data) {
       toast.success("Booking confirmed!");
-      onHide();
+      setBookingSuccess(true); // ✅ trigger slot refresh
+      onHide(); // ✅ close modal
     } else {
       alert("Booking failed: " + (result.message || "Unknown error"));
     }
@@ -132,6 +131,18 @@ const handleBookingSubmit = async () => {
     toast.error("Booking error: " + error.message);
   }
 };
+
+
+
+useEffect(() => {
+  if (bookingSuccess) {
+    fetchParkingSpots(); // ✅ refresh availability
+    setBookingSuccess(false); // reset trigger
+  }
+}, [bookingSuccess]);
+
+
+
 console.log("spot object:", spot);
   useEffect(() => {
   if (spot && show) {

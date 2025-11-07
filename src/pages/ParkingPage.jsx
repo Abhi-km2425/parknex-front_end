@@ -11,6 +11,7 @@ function ParkingPage() {
       const [searchQuery, setSearchQuery] = useState("");
       const [showBookingModal, setShowBookingModal] = useState(false);
       const [selectedSpot, setSelectedSpot] = useState(null);
+      
     
 const [parkingSpots, setParkingSpots] = useState([]);
 
@@ -195,6 +196,7 @@ const filteredSpots = selectedLocation
 
       {/* Booking Modal */}
       <BookingModal
+      fetchParkingSpots={fetchParkingSpots}
         show={showBookingModal}
         onHide={() => setShowBookingModal(false)}
         spot={selectedSpot}

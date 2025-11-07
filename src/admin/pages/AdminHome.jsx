@@ -3,40 +3,10 @@ import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import AdminHeader from '../component/AdminHeader';
 import { FaParking, FaCalendarCheck, FaUsers, FaRupeeSign } from 'react-icons/fa';
-import { getAllParkingAPI } from '../../service/allAPI';
+import { getActiveUsersAPI, getAllParkingAPI, getTodayBookingsAPI, getTodayRevenueAPI } from '../../service/allAPI';
 
 
 const AdminHome = () => {
-  const stats = [
-    { 
-      icon: <FaParking className="text-success" size={30} />,
-      title: "Total Parking Spots",
-      value: "24",
-      change: "+2 this week",
-      link: "/admin/parking"
-    },
-    { 
-      icon: <FaCalendarCheck className="text-warning" size={30} />,
-      title: "Today's Bookings",
-      value: "8",
-      change: "3 upcoming",
-      link: "/admin/bookings"
-    },
-    { 
-      icon: <FaUsers className="text-info" size={30} />,
-      title: "Active Users",
-      value: "156",
-      change: "+12 today",
-      link: "/admin/users"
-    },
-    { 
-      icon: <FaRupeeSign className="text-success" size={30} />,
-      title: "Today's Revenue",
-      value: "₹2,840",
-      change: "From 8 bookings",
-      link: "/admin/revenue"
-    }
-  ];
 
   const recentActivities = [
     { time: "10:30 AM", activity: "New booking at MG Road", user: "User #4587" },
@@ -45,13 +15,22 @@ const AdminHome = () => {
     { time: "Yesterday", activity: "Payment received", user: "User #4456" }
   ];
 const [totalSlots, setTotalSlots] = useState(0);
+const [todayBookings, setTodayBookings] = useState(0);
+const [activeUsers, setActiveUsers] = useState(0);
+const [todayRevenue, setTodayRevenue] = useState(0);
 
+const fetchTodayBookings = async () => {
+  try {
+    const result = await getTodayBookingsAPI(); // your service layer
+    if (result.status === 200) {
+      setTodayBookings(result.data.total);
+    }
+  } catch (error) {
+    console.error("Error fetching today's bookings:", error);
+  }
+};
 
-
-useEffect(() => {
-  fetchSlotCount();
-}, []);
-
+  //user slot
 const fetchSlotCount = async () => {
   try {
     const result = await getAllParkingAPI();
@@ -62,6 +41,77 @@ const fetchSlotCount = async () => {
     console.error("Error fetching parking slots:", error);
   }
 };
+
+
+//active users
+const fetchActiveUsers = async () => {
+  try {
+    const result = await getActiveUsersAPI(); // your service layer
+    if (result.status === 200) {
+      setActiveUsers(result.data.total);
+    }
+  } catch (error) {
+    console.error("Error fetching active users:", error);
+  }
+};
+
+
+//todays revenue
+const fetchTodayRevenue = async () => {
+  try {
+    const result = await getTodayRevenueAPI(); // your service layer
+    if (result.status === 200) {
+      setTodayRevenue(result.data.total);
+    }
+  } catch (error) {
+    console.error("Error fetching today's revenue:", error);
+  }
+};
+
+useEffect(() => {
+  fetchSlotCount();
+  fetchTodayBookings()
+  fetchActiveUsers()
+  fetchTodayRevenue()
+}, []);
+
+console.log(todayBookings,"no of bookins by user");
+console.log(activeUsers,"no of active user");
+console.log(todayRevenue,"todays revenue");
+
+
+  const stats = [
+    { 
+      icon: <FaParking className="text-success" size={30} />,
+      title: "Total Parking Spots",
+      value: totalSlots,
+      change: "+2 this week",
+      link: "admin-parking"
+    },
+    { 
+      icon: <FaCalendarCheck className="text-warning" size={30} />,
+      title: "Today's Bookings",
+      value: todayBookings,
+      change: "3 upcoming",
+      link: "/admin/bookings"
+    },
+    { 
+      icon: <FaUsers className="text-info" size={30} />,
+      title: "Active Users",
+      value: activeUsers,
+      change: "+12 today",
+      link: "/admin/users"
+    },
+    { 
+      icon: <FaRupeeSign className="text-success" size={30} />,
+      title: "Today's Revenue",
+      value: `₹${todayRevenue}`,
+      change: "From 8 bookings",
+      link: "/admin/revenue"
+    }
+  ];
+
+
 
   return (
 <>
@@ -90,7 +140,7 @@ const fetchSlotCount = async () => {
                             View
                           </Button>
                         </div>
-                        <h4 className="fw-bold text-success">{totalSlots}</h4>
+                        <h4 className="fw-bold text-success">{stat.value}</h4>
                         <h6 className="mb-2">{stat.title}</h6>
                         <small className="text-muted">{stat.change}</small>
                       </Card.Body>

@@ -111,18 +111,18 @@ const BookingHistoryPage = () => {
 
   //cancel booking
 
-  const handleCancelBooking = async (id) => {
-    try {
-      const result = await cancelBookingAPI(id);
-      toast.success(result, "cancelled succesfully");
-      console.log(result, "cancelled");
+const handleCancelBooking = async (id) => {
+  try {
+    const result = await cancelBookingAPI(id);
+    toast.success("Cancelled successfully"); // ✅ clean toast
+    console.log(result, "cancelled");
 
-      getApiHandler(); // refresh the list
-    } catch (error) {
-      toast.error("Failed to cancel booking");
-      console.error(error);
-    }
-  };
+    getApiHandler(); // ✅ refresh slot count and list
+  } catch (error) {
+    toast.error("Failed to cancel booking");
+    console.error(error);
+  }
+};
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("token");
